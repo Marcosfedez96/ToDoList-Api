@@ -48,22 +48,14 @@ namespace ToDoListApi.Sevices
             DataBaseConnection connection = new DataBaseConnection();
             connection.SqlOpenConnection();
 
-            string query = "SELECT nombre_usuario from usuarios;";
+            string query = "SELECT Count(nombre_usuario) from usuarios where nombre_usuario = @userName;";
             SqlCommand cmd = new SqlCommand(query, connection.GetClient());
+            cmd.Parameters.AddWithValue("@userName",userName);
             SqlDataReader reader = cmd.ExecuteReader();
             while (reader.Read())
             {
-                User user = new User()
-                {
-                    UserName = reader.GetString(0),
-                };
-                userList.Add(user);
-            }
-            foreach (User user in userList)
-            {
-                if (user.UserName == userName)
-                {
-                    connection.SqlCloseConnection();
+                int amount = reader.GetInt32(0);
+                if (amount > 0) {
                     return true;
                 }
             }

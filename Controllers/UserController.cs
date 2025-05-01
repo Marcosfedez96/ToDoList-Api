@@ -47,7 +47,7 @@ public class UserController : ControllerBase
     }
     [HttpDelete]
     public ActionResult<User> DeleteUser() {
-        //Todavia no hace nada
+                //Todavia no hace nada
 
         return Ok();
 
