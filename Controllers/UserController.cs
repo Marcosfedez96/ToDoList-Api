@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
+using ToDoListApi.DTOs;
 using ToDoListApi.Models;
-using ToDoListApi.Sevices;
+using ToDoListApi.Services;
 
 namespace ToDoListApi.Controllers;
 
@@ -10,48 +11,61 @@ namespace ToDoListApi.Controllers;
 
 public class UserController : ControllerBase
 {
-    [HttpGet]
-    public ActionResult<IEnumerable<User>> GetUser()
+    UserService _userService;
+
+    public UserController(UserService userService)
     {
-        UserService userService = new UserService();
-        List<User> users = new List<User>();
-        users = userService.GetUsersList();
+        _userService = userService;
+    }
+
+    [HttpGet ("GetUser")]
+    public ActionResult<IEnumerable<UserDTO>> GetUser()
+    {
+        
+        List<UserDTO> users = new List<UserDTO>();
+        users = _userService.GetUsersList();
         return Ok(users);
     }
 
+    [HttpGet("{userId}", Name = "GetUserById")]
+
+    public ActionResult<UserDTO> GetUserById(int userId)
+    {
+        return Ok(_userService.GetById(userId));
+    }
+
   
 
-    [HttpPost]
+    [HttpPost(Name = "PostUser")]
     public ActionResult<User> PostUser(string userName , string password)
     {
-        UserService userService = new UserService();
-
-        if (userService.UserExist(userName)) {
-            return Conflict("el usuario existe.");
+        var user = _userService.InsertUser(userName, password);
+       if(user == null)
+        {
+            return NoContent();
         }
+        ;
 
-        userService.InsertUser(userName,password);
-
-
-        return NoContent();
+        return CreatedAtAction(nameof(GetUserById), new { userId = user.IdUser }, user);
 
     }
 
-  
 
-    [HttpPut]
-    public ActionResult<User> PutUser()
-    {
-        //Todavia no hace nada
-        return Ok();
-    }
-    [HttpDelete]
-    public ActionResult<User> DeleteUser() {
-                //Todavia no hace nada
 
-        return Ok();
+    //[HttpPut]
+    //public ActionResult<User> PutUser()
+    //{
+    //    Todavia no hace nada
+    //    return Ok();
+    //}
+    //[HttpDelete]
+    //public ActionResult<User> DeleteUser()
+    //{
+    //    Todavia no hace nada
 
-    }
+    //    return Ok();
+
+    //}
 
 
 }

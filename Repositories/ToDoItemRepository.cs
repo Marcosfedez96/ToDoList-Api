@@ -1,11 +1,19 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.Data.SqlClient;
+﻿using Microsoft.Data.SqlClient;
+using ToDoListApi.DTOs;
 using ToDoListApi.Models;
 
-namespace ToDoListApi.Sevices;
+namespace ToDoListApi.Repositories;
 
-public class ToDoItemService
+public class ToDoItemRepository : IToDoItemRepository
 {
+    public readonly SqlConnection _connection;
+    public readonly DataBaseConnection _dataBaseConnection;
+
+    public ToDoItemRepository(SqlConnection connection, DataBaseConnection dataBaseConnection   )
+    {
+        _connection = connection;
+        _dataBaseConnection = dataBaseConnection;
+    }
 
     public List<ToDoItem> GetToDoItemlist()
     {
@@ -32,34 +40,12 @@ public class ToDoItemService
         return list;
     }
 
-    public GetUser SearchUser(int IdUser)
-    {
-        DataBaseConnection dataBaseConnection = new();
-        dataBaseConnection.SqlOpenConnection();
-
-        string query = "Select * from usuarios where id_usuario = @IdUser";
-        SqlCommand cmd = new SqlCommand(query, dataBaseConnection.GetClient());
-        cmd.Parameters.AddWithValue("@IdUser", IdUser);
-        SqlDataReader reader = cmd.ExecuteReader();
-        while (reader.Read())
-        {
-            var getUser = new GetUser()
-            {
-                IdUser = reader.GetInt32(0),
-                UserName = reader.GetString(1)
-            };
-            return getUser;
-        }
-        ;
-        return null;
-    }
-
     public List<ToDoItem> GetToDoUserItem(int idUser)
     {
         var list = new List<ToDoItem>();
         DataBaseConnection dataBaseConnection = new();
         dataBaseConnection.SqlOpenConnection();
-        GetUser user = SearchUser(idUser);
+        UserDTO user = SearchUser(idUser);
         string query = "select tareas.*  from tareas where id_usuario = @IdUser;";
         SqlCommand cmd = new SqlCommand(query, dataBaseConnection.GetClient());
         cmd.Parameters.AddWithValue("@IdUser", idUser);
@@ -85,19 +71,19 @@ public class ToDoItemService
         return list;
     }
 
-    public ToDoItem GetToDoItem(int idUser , int idTask)
+    public ToDoItem GetToDoItem(int idUser, int idTask)
     {
-        DataBaseConnection dataBaseConnection = new();
-        dataBaseConnection.SqlOpenConnection();
-        GetUser user = SearchUser(idUser);
+        _dataBaseConnection.SqlOpenConnection();
+        UserDTO user = SearchUser(idUser);
+        ToDoItem? toDo = null;
         string query = "select *  from tareas where id_tarea = @idTask;";
-        SqlCommand cmd = new SqlCommand(query, dataBaseConnection.GetClient());
+        SqlCommand cmd = new SqlCommand(query, _dataBaseConnection.GetClient());
         cmd.Parameters.AddWithValue("@idTask", idTask);
         SqlDataReader reader = cmd.ExecuteReader();
         while (reader.Read())
         {
 
-            var toDo = new ToDoItem()
+            toDo = new ToDoItem()
             {
                 IdTask = reader.GetInt32(0),
                 NameTask = reader.GetString(1),
@@ -107,18 +93,20 @@ public class ToDoItemService
                 Done = reader.GetBoolean(5),
                 UserData = user
             };
-            return toDo;
+           
         }
-        return null;
+        reader.Close();
+        return toDo;
     }
 
     public void createToDoItem(ToDoItem item)
     {
-        DataBaseConnection dataBaseConnection = new DataBaseConnection();
-        dataBaseConnection.SqlOpenConnection();
+        
+        _dataBaseConnection.SqlOpenConnection();
+        item.IdTask = MaxId();
         string query = "insert into tareas (id_tarea, nombre_tarea, importancia, fecha ,categoria,hecho,id_usuario) " +
             "values(@id_task, @name_task, @importance, @date ,@category,@done,@id_user);";
-        SqlCommand cmd = new SqlCommand(@query, dataBaseConnection.GetClient());
+        SqlCommand cmd = new SqlCommand(@query, _dataBaseConnection.GetClient());
         cmd.Parameters.AddWithValue("@id_task", item.IdTask);
         cmd.Parameters.AddWithValue("@name_task", item.NameTask);
         cmd.Parameters.AddWithValue("@importance", item.Importance);
@@ -127,7 +115,45 @@ public class ToDoItemService
         cmd.Parameters.AddWithValue("@done", item.Done);
         cmd.Parameters.AddWithValue("@id_user", item.UserData.IdUser);
         cmd.ExecuteNonQuery();
-        dataBaseConnection.SqlCloseConnection();
+        _dataBaseConnection.SqlCloseConnection();
+       
     }
 
+    public UserDTO SearchUser(int IdUser)
+    {
+        DataBaseConnection dataBaseConnection = new();
+        dataBaseConnection.SqlOpenConnection();
+
+        string query = "Select * from usuarios where id_usuario = @IdUser";
+        SqlCommand cmd = new SqlCommand(query, dataBaseConnection.GetClient());
+        cmd.Parameters.AddWithValue("@IdUser", IdUser);
+        SqlDataReader reader = cmd.ExecuteReader();
+        while (reader.Read())
+        {
+            var getUser = new UserDTO()
+            {
+                IdUser = reader.GetInt32(0),
+                UserName = reader.GetString(1)
+            };
+            return getUser;
+        }
+    ;
+        return null;
+    }
+
+    private int MaxId()
+    {
+        _dataBaseConnection.SqlOpenConnection();
+        int max = 1;
+        string query = "select MAX(id_tarea + 1) from tareas;";
+        SqlCommand cmd = new SqlCommand (query, _dataBaseConnection.GetClient());
+        SqlDataReader reader = cmd.ExecuteReader();
+        while (reader.Read())
+        {
+
+            max =  reader.GetInt32(0);
+        }
+        reader.Close();
+        return max;
+    }
 }

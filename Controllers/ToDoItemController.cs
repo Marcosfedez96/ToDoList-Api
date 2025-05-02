@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 using ToDoListApi.Models;
-using ToDoListApi.Sevices;
+using ToDoListApi.Services;
 
 namespace ToDoListApi.Controllers;
 
@@ -10,51 +11,58 @@ namespace ToDoListApi.Controllers;
 
 public class ToDoItemController : ControllerBase
 {
+    ToDoItemService _todoItemService;
+
+    public ToDoItemController(ToDoItemService toDoItemService)
+    {
+        _todoItemService = toDoItemService;
+    }
+
     [HttpGet("GetAllTasks")]
     public ActionResult<Task> GetAllTasks()
     {       
         List<ToDoItem> list = new List<ToDoItem>();
-        ToDoItemService service = new ToDoItemService();
-        list = service.GetToDoItemlist();
+        list = _todoItemService.GetToDoItemList();
         return Ok(list);
     }
     [HttpGet("GetTaskUser")]
     public ActionResult<Task> GetTaskUser(int idUser)
     {        
         List<ToDoItem> list = new List<ToDoItem>();
-        ToDoItemService service = new ToDoItemService();
-        list = service.GetToDoUserItem(idUser);
+        list = _todoItemService.GetToDoUserItem(idUser);
         return Ok(list);
     }
-    [HttpGet("GetTask")]
-    public ActionResult<Task> GetTask(int idUser, int idtask)
+    [HttpGet("GetToDoItem")]
+    public ActionResult<Task> GetToDoItem(int idUser, int idtask)
     {        
         ToDoItem toDoItem = new ToDoItem(); 
-        ToDoItemService service = new ToDoItemService();
-        toDoItem = service.GetToDoItem(idUser, idtask);
+        toDoItem = _todoItemService.GetToDoItem(idUser, idtask);
+        if (toDoItem == null)
+        {
+            return NotFound();
+        }
         return Ok(toDoItem);
     }
 
     [HttpPost ("PostTask")]
     public ActionResult<Task> PostTask([FromBody]ToDoItem toDoItem)
     {
-        ToDoItemService service = new ToDoItemService();
-        service.createToDoItem(toDoItem);
+        _todoItemService.createToDoItem(toDoItem);
 
-        return CreatedAtAction(nameof(GetTask),
-            new { id = toDoItem.IdTask }, toDoItem);
+        return CreatedAtAction(nameof(GetToDoItem),
+            new { idUser = toDoItem.UserData.IdUser, idtask = toDoItem.IdTask }, toDoItem);
     }
-    [HttpPut]
-    public ActionResult<Task> PutTask()
-    {        //Todavia no hace nada
+    //[HttpPut]
+    //public ActionResult<Task> PutTask()
+    //{        //Todavia no hace nada
 
-        return Ok();
-    }
-    [HttpDelete]
-    public ActionResult<Task> DeleteTask()
-    {        //Todavia no hace nada
+    //    return Ok();
+    //}
+    //[HttpDelete]
+    //public ActionResult<Task> DeleteTask()
+    //{        //Todavia no hace nada
 
-        return Ok();
-    }
+    //    return Ok();
+    //}
 
 }

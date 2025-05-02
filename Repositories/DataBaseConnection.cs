@@ -1,11 +1,15 @@
 ﻿using Microsoft.Data.SqlClient;
 
-namespace ToDoListApi.Sevices;
+namespace ToDoListApi.Repositories;
 
 public class DataBaseConnection
 {
-    public static string route = "Data Source=DESKTOP-6A61RJD;Initial Catalog=ToDoAppDB;Integrated Security=True;Trust Server Certificate=True";
-    public SqlConnection client = new SqlConnection(route);
+    public static string _stringConnection = "Data Source=DESKTOP-6A61RJD;Initial Catalog=ToDoAppDB;Integrated Security=True;Trust Server Certificate=True";
+    public SqlConnection client = new SqlConnection(_stringConnection);
+
+    public DataBaseConnection() {
+        _stringConnection = "Data Source=DESKTOP-6A61RJD;Initial Catalog=ToDoAppDB;Integrated Security=True;Trust Server Certificate=True";
+    }
 
     public SqlConnection GetClient()
     {
