@@ -1,6 +1,8 @@
-﻿namespace ToDoListApi.DTOs
+﻿using ToDoListApi.DTOs;
+
+namespace ToDoListApi.Models
 {
-    public class ToDoItemDTO
+    public class ToDoItem
     {
         private int _idTask;
         private string _nameTask;

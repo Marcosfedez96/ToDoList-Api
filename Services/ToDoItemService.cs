@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.Data.SqlClient;
-using ToDoListApi.DTOs;
 using ToDoListApi.Models;
 using ToDoListApi.Repositories;
 
