@@ -15,7 +15,7 @@ El proyecto está separado en capas:
 
 - Controllers: reciben las peticiones HTTP y devuelven las respuestas.
 - Services: contienen la lógica de la aplicación
-  Repositories: acceden a la base de datos
+- Repositories: acceden a la base de datos
 - DTOs: objetos que se usan para recibir y enviar datos por la API.
 - Models: entidades que representan los datos.
 
