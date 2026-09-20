@@ -27,8 +27,8 @@ Al ejecutar el proyecto, Swagger lista todos los endpoints disponibles en `/swag
 | Método  |          Ruta             |       Descripción                          |
 |---------|---------------------------|--------------------------------------------|
 |GET      | /api/ToDoItem/GetAllTasks | Obtener todas las tareas                   | 
-|GET      | /api/ToDoItem/GetTaskUser | Obtener las tareas de un usuario especifico|
-|GET      | /api/ToDoItem/GetToDoItem | obtener una tarea específica               |
+|GET      | /api/ToDoItem/GetTaskUser | Obtener las tareas de un usuario específico|
+|GET      | /api/ToDoItem/GetToDoItem | Obtener una tarea específica               |
 |POST     | /api/ToDoItem/PostTask    | Crear nueva tarea                          |
 |GET      | /api/User/GetUser         | Obtener todos los usuarios                 |
 |GET      | /api/User/GetUserById     | Obtener un usuario en específico           |
