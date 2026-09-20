@@ -1,4 +1,4 @@
-# ToDoList-API
+# ToDoListAPI
 API REST para gestionar usuarios y sus tareas, hecha con ASP.NET Core y SQL Server.
 
 ## Tecnologías
@@ -26,11 +26,11 @@ Al ejecutar el proyecto, Swagger lista todos los endpoints disponibles en `/swag
 
 | Método  |          Ruta             |       Descripción                          |
 |---------|---------------------------|--------------------------------------------|
-|GET      | /api/ToDoItem/GetAllTasks | Obtener todas las Tareas                   | 
+|GET      | /api/ToDoItem/GetAllTasks | Obtener todas las tareas                   | 
 |GET      | /api/ToDoItem/GetTaskUser | Obtener las tareas de un usuario especifico|
-|GET      | /api/ToDoItem/GetToDoItem | obtener una tarea especifica               |
+|GET      | /api/ToDoItem/GetToDoItem | obtener una tarea específica               |
 |POST     | /api/ToDoItem/PostTask    | Crear nueva tarea                          |
-|GET      | /api/User/GetUser         | Obtener todas los usuarios                 |
+|GET      | /api/User/GetUser         | Obtener todos los usuarios                 |
 |GET      | /api/User/GetUserById     | Obtener un usuario en específico           |
 |POST     | /api/User/PostUser        | Crear un nuevo usuario                     |
 
