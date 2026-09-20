@@ -16,7 +16,7 @@ builder.Services.AddScoped<ToDoItemService>();
 builder.Services.AddScoped<UserService>(); 
 builder.Services.AddScoped<DataBaseConnection, DataBaseConnection>();
 builder.Services.AddScoped<SqlConnection>(_ =>
-    new SqlConnection(builder.Configuration.GetConnectionString("Data Source=DESKTOP-6A61RJD;Initial Catalog=ToDoAppDB;Integrated Security=True;Trust Server Certificate=True")));
+    new SqlConnection(builder.Configuration.GetConnectionString("DefaultConnection")));
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
